@@ -42,8 +42,16 @@ def get_resize_factor(size):
 
 
 def strip_speaker(text):
-    return re.sub("^[\S]+: ", "", text)
+    try:
+        speaker = re.findall("^([\S]+): ", text)[0]
+    except:
+        speaker = ""
+    return speaker, re.sub("^[\S]+: ", "", text)
 
 
 def postprocess(text):
     return re.sub("''", "\"", text)
+
+
+def find_voice_actor(speaker):
+    return "Justin"

@@ -57,9 +57,9 @@ def pause_detection():
         print("==========")
 
 
-def tts(text):
+def tts(text, actor):
     pygame.mixer.music.unload()
-    response = polly_client.synthesize_speech(VoiceId='Ivy',
+    response = polly_client.synthesize_speech(VoiceId=actor,
                                               OutputFormat='mp3',
                                               Text=text,
                                               Engine='neural')
@@ -119,7 +119,9 @@ def main():
                     print(predicted_dialog)
                     print()
                     if not debug_flag:
-                        tts(strip_speaker(predicted_dialog))
+                        speaker, dialog = strip_speaker(predicted_dialog)
+                        actor = find_voice_actor(speaker)
+                        tts(dialog, actor)
                 flag_change = False
             predicted_prev = predicted_dialog
             end_time = time.time()
