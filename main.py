@@ -16,6 +16,7 @@ import keyboard
 import cv2
 import time
 import mss
+import sys
 
 
 def process(img, resize_factor):
@@ -117,7 +118,8 @@ def main():
                 if flag_change:
                     print(predicted_dialog)
                     print()
-                    #tts(strip_speaker(predicted_dialog))
+                    if not debug_flag:
+                        tts(strip_speaker(predicted_dialog))
                 flag_change = False
             predicted_prev = predicted_dialog
             end_time = time.time()
@@ -125,7 +127,13 @@ def main():
 
 
 if __name__ == "__main__":
+    debug_flag = False
     pause_flag = False
+    try:
+        if sys.argv[1] == "debug":
+            debug_flag = True
+    except:
+        pass
     model = tf.keras.models.load_model(model_path)
     df = pd.read_csv(credentials_file)
     key_id = df["Access key ID"][0]
