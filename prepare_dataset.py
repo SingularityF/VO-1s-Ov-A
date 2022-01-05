@@ -5,6 +5,7 @@ import json
 import sys
 from preproc import *
 from pathlib import Path
+from configs import *
 
 
 def make_dataset(labels, file_names, dataset_name):
@@ -55,8 +56,6 @@ def prepare_data(annotation_path, dataset_name):
 
 
 if __name__ == "__main__":
-    # Configs
-    img_folder_path = "./unlabeled_data"
     if not len(sys.argv) == 3:
         print("Error - wrong command line arguments")
         print("Usage: python prepare_dataset.py input_data.json ./datasets/output_data.tfrecords")

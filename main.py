@@ -7,6 +7,7 @@ from utils import *
 from pathlib import Path
 import numpy as np
 from preproc import *
+from configs import *
 import pandas as pd
 import pygame
 import uuid
@@ -124,14 +125,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # Config
-    sleep_time = .01
-    loop_time = .2
-    credentials_file = "./credentials.csv"
-    aws_region = "us-east-1"
-    img_output_path = "./saved_img"
-    model_path = "./models/04jan22.h5"
-    # Init
     pause_flag = False
     model = tf.keras.models.load_model(model_path)
     df = pd.read_csv(credentials_file)

@@ -5,6 +5,7 @@ import tensorflow as tf
 from pathlib import Path
 from preproc import *
 from sklearn.model_selection import train_test_split
+from configs import *
 
 
 def transform_dataset(dataset):
@@ -69,8 +70,6 @@ def prepare_model():
 
 
 if __name__ == "__main__":
-    # Configs
-    dataset_path = "./datasets"
     if not len(sys.argv) == 2:
         print("Error - wrong command line arguments")
         print("Usage: python train.py ./models/output.h5")
