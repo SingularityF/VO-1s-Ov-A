@@ -6,7 +6,7 @@ Pronounced as "Voice Over", in British accent🤔. This is a voice over "mod" fo
 2. Install dependencies `pip install -r requirements.txt`
 3. Create an AWS account if not exist
 4. Set up a new user in AWS IAM, grant it `PollyFullAccess`
-5. Download csv credentials for the user you created and put it in this folder
+5. Download csv credentials for the user you created and put it in this folder, name it `credentials.csv`
 6. Adjust configs in `configs.py`
 7. Run the app with `python main.py`
 8. Press `F9` to pause and unpause the app. Exit the app with `Ctrl+c`
