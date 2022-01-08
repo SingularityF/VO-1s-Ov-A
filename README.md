@@ -1,4 +1,4 @@
-# VO-1s-Ov-A
+# VO-1s Ov-A
 Pronounced as "Voice Over", in British accent🤔. This is a voice over "mod" for "VA-11 Hall-A" using OCR and TTS, achieved by a CNN model trained by hand-labelled data and Amazon Polly. AWS offers a "Free Tier" for Amazon Polly so this voice-over "mod" should be free for the most part. 
 
 👉[**You can watch a video of the "mod" in action here**](https://youtu.be/2dIXSJq-nPg).👈
