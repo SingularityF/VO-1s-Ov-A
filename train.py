@@ -37,18 +37,25 @@ def transform_dataset(dataset):
     return data_x, data_y
 
 
-def train_model(output_path):
-    datasets = glob.glob(str(Path(dataset_path, "*")))
+def train_model(input_path, output_path):
+    input_path = str(Path(dataset_folder_path, input_path))
+    output_path = str(Path(model_folder_path, output_path))
+    datasets = glob.glob(str(Path(input_path)))
     labeled_set = tf.data.TFRecordDataset(datasets)
     full_x, full_y = transform_dataset(labeled_set)
-    train_x, val_x, train_y, val_y = train_test_split(
-        full_x, full_y, test_size=0.10, random_state=1)
     model = prepare_model()
-    model.fit(train_x, train_y,
+    # train_x, val_x, train_y, val_y = train_test_split(
+    #     full_x, full_y, test_size=0.10, random_state=1)
+    # model.fit(train_x, train_y,
+    #           batch_size=100,
+    #           epochs=100,
+    #           verbose=1,
+    #           validation_data=(val_x, val_y),)
+    model.fit(full_x, full_y,
               batch_size=100,
               epochs=100,
               verbose=1,
-              validation_data=(val_x, val_y),)
+              )
     model.save(output_path)
 
 
@@ -70,9 +77,11 @@ def prepare_model():
 
 
 if __name__ == "__main__":
-    if not len(sys.argv) == 2:
+    if not len(sys.argv) == 3:
         print("Error - wrong command line arguments")
-        print("Usage: python train.py ./models/output.h5")
+        print("Usage: python train.py *.tfrecords output.h5")
+        print("OR: python train.py dataset.tfrecords output.h5")
     else:
-        path_output = sys.argv[1]
-        train_model(path_output)
+        path_input = sys.argv[1]
+        path_output = sys.argv[2]
+        train_model(path_input, path_output)

@@ -24,7 +24,7 @@ def debug_contour(img, contours):
 
 
 def line_detector(img, debug_flag=False):
-    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2000, 1))
+    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2000, 2))
     dilation = cv2.dilate(img, rect_kernel, iterations=1)
     contours, hierarchy = cv2.findContours(
         dilation, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
@@ -75,7 +75,7 @@ def preproc_img_color(img, resize_factor):
 
 def thresholding(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, bw_img = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY)
+    _, bw_img = cv2.threshold(gray, 5, 255, cv2.THRESH_BINARY)
     return bw_img
 
 

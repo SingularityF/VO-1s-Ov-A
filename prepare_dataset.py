@@ -9,6 +9,7 @@ from configs import *
 
 
 def make_dataset(labels, file_names, dataset_name):
+    dataset_name = str(Path(dataset_folder_path, dataset_name))
     writer = tf.io.TFRecordWriter(dataset_name)
     for i, label in enumerate(labels):
         img = cv2.imread(str(Path(img_folder_path, file_names[i])))
@@ -16,6 +17,7 @@ def make_dataset(labels, file_names, dataset_name):
         char_label = re.sub("\s", "", label)
         line_boundary = line_detector(bw_img)
         idx = 0
+        examples = []
         for x, y, w, h in line_boundary:
             line = bw_img[y:y+h, x:x+w]
             word_boundary = word_detector(line)
@@ -34,12 +36,17 @@ def make_dataset(labels, file_names, dataset_name):
                         }
                         example = tf.train.Example(
                             features=tf.train.Features(feature=features))
-                        writer.write(example.SerializeToString())
                     except:
-                        print("Possible errorneous label:")
-                        print(char_label)
                         traceback.print_exc()
+                    examples.append(example)
                     idx += 1
+        if len(examples) == len(char_label):
+            for example in examples:
+                writer.write(example.SerializeToString())
+        else:
+            print("==========")
+            print("Possible errorneous label, data excluded for training")
+            print(char_label)
 
 
 def prepare_data(annotation_path, dataset_name):
@@ -58,7 +65,7 @@ def prepare_data(annotation_path, dataset_name):
 if __name__ == "__main__":
     if not len(sys.argv) == 3:
         print("Error - wrong command line arguments")
-        print("Usage: python prepare_dataset.py input_data.json ./datasets/output_data.tfrecords")
+        print("Usage: python prepare_dataset.py input_data.json output_data.tfrecords")
     else:
         path_input = sys.argv[1]
         path_output = sys.argv[2]
