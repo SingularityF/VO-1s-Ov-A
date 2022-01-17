@@ -1,6 +1,7 @@
 __pycache__/
 saved_img/
 unlabeled_data/
-*.json
+/*.json
 speech.mp3
 credentials.csv
+test.h5

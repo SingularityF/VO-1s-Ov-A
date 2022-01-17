@@ -1,5 +1,6 @@
 import cv2
 import tensorflow as tf
+import numpy as np
 
 
 def tf_int64_feature(value):
@@ -37,8 +38,9 @@ def line_detector(img, debug_flag=False):
     return sorted(lines, key=lambda x: x[1])
 
 
-def word_detector(img, debug_flag=False):
-    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 100))
+def word_detector(img, word_spacing, debug_flag=False):
+    rect_kernel = cv2.getStructuringElement(
+        cv2.MORPH_RECT, (word_spacing, 100))
     dilation = cv2.dilate(img, rect_kernel, iterations=1)
     contours, hierarchy = cv2.findContours(
         dilation, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
@@ -69,13 +71,28 @@ def preproc_img_color(img, resize_factor):
     height, width, _ = img.shape
     img = cv2.resize(img, (int(width*resize_factor),
                            int(height*resize_factor)), interpolation=cv2.INTER_AREA)
-    img = cv2.rectangle(img, (780, 93), (1000, 200), (0, 0, 0), -1)
+    #img = cv2.rectangle(img, (780, 93), (1000, 200), (0, 0, 0), -1)
     return img
 
 
-def thresholding(img):
+def preproc_img_bw(img, threshold, prompt_roi=None):
+    bw_img = thresholding(img, threshold)
+    kernel = np.array([[0, 0, 0],
+                       [0, 1, 0],
+                       [0, 0, 0]], dtype=np.uint8)
+    bw_img = cv2.erode(bw_img, kernel, iterations=1)
+    if prompt_roi != None:
+        height, width = bw_img.shape
+        bw_img = cv2.rectangle(bw_img, (int(width*prompt_roi[0]), int(height*prompt_roi[1])), (int(
+            width*prompt_roi[0]+width*prompt_roi[2]), int(height*prompt_roi[1] + height*prompt_roi[3])), (0, 0, 0), -1)
+    return bw_img
+
+
+def thresholding(img, threshold):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, bw_img = cv2.threshold(gray, 5, 255, cv2.THRESH_BINARY)
+    #_, bw_img = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
+    bw_img = cv2.adaptiveThreshold(
+        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, threshold["block_size"], - threshold["const"])
     return bw_img
 
 
@@ -84,3 +101,16 @@ def char_img2arr(char):
         char, (28, 28), interpolation=cv2.INTER_AREA)
     arr = tf.expand_dims(arr, -1)
     return arr
+
+
+def img_reconstruct(example):
+    img = example["char_img"].numpy()
+    img = np.frombuffer(img, dtype=np.uint8).reshape(
+        example['height'], example['width'])
+    return img
+
+
+def filter_noise(char):
+    if sum(sum(char > 128)) < 5:
+        return True
+    return False

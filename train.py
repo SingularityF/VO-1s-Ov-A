@@ -23,12 +23,10 @@ def transform_dataset(dataset):
     data_x = []
     data_y = []
     for example in transformed_data:
-        img = example["char_img"].numpy()
         label_str = example['label'].numpy()
         label_one_hot = np.zeros(128)
         label_one_hot[ord(label_str)] = 1
-        img = np.frombuffer(img, dtype=np.uint8).reshape(
-            example['height'], example['width'])
+        img = img_reconstruct(example)
         arr = char_img2arr(img)
         data_x.append(arr)
         data_y.append(label_one_hot)
